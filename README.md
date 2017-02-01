@@ -1,7 +1,7 @@
 # RNAlogo
 
 A biological sequence logo generator in SVG format, for the usage as a header-only library for cpp programs.
-The alphabets are given as any kinds of strings coded in Unicode, such as "Ψ" (greek) or "AU" (two characters).
+The alphabets are given as any kinds of Unicode strings, such as "Ψ" (greek) or "AU" (two characters).
 
 ## Download & Run sample code
 
