@@ -11,4 +11,4 @@ build/bin/RNAlogo-sample > sample.svg
 ```
 The generated sample logo looks like,
 
-![sample1](https://github.com/iyak/blob/master/logos/sample1.svg)
+![sample1](https://github.com/iyak/RNAlogo/blob/master/logos/sample1.svg)
