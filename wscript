@@ -51,6 +51,6 @@ def build(bld):
       cxxflags="-Wall -std=c++11",
       source="RNAlogo/main.cpp",
       include="RNAlogo",
-      target="bin/RNAlogo",
+      target="bin/RNAlogo-sample",
       uselib="freetype",
       )
