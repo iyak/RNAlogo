@@ -31,15 +31,11 @@ int main() {
   //logo.set_font("/Library/Fonts//AppleGothic.ttf"); // this step is done during configuration. see wscript.
   
   /* geometory settings */
-  logo.set_title("sample");
+  logo.set_title("sample1");
   // logo.set_x_axis_height(0); // if you don't want position label.
 
   /* color map settings */
-  logo.map_color("A", "green"); // HTML-like color name ok.
-  logo.map_color("G", "gold");
-  logo.map_color("C", "royalblue");
-  logo.map_color("U", "crimson");
-  logo.map_color("Ψ", "#9932CC"); // Unicode ok.
+  logo.map_color("Ψ", "mediumpurple"); //HTML-like color name ok.
   logo.map_color("Ψo", "#9932CC"); // multiple characters ok.
 
   /* run */

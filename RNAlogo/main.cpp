@@ -15,14 +15,9 @@ using namespace iyak;
 int main(int argc, char* argv[]) {
   RNAlogo logo;
 
-  logo.set_title("sample");
-
-  logo.map_color("A", "green");
-  logo.map_color("G", "gold");
-  logo.map_color("C", "royalblue");
-  logo.map_color("U", "crimson");
-  logo.map_color("Ψ", "#9932CC");
-  logo.map_color("Ψo", "#9932CC");
+  logo.set_title("sample1");
+  logo.map_color("Ψ", "mediumpurple");
+  logo.map_color("Ψo", "#9370DB");
 
   logo.pict_table_bit
   (

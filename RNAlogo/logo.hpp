@@ -234,7 +234,13 @@ namespace iyak {
 
     using table_t = vector<vector<logo_pair>>;
     table_t _table;
-    std::unordered_map<char32_t, string> _color_map;
+    std::unordered_map<char32_t, string> _color_map {
+      {0x00000041, "#339541"}, // A
+      {0x00000047, "#F5C000"}, // G
+      {0x00000043, "#545FFF"}, // C
+      {0x00000055, "#D21010"}, // U
+      {0x00000054, "#D21010"}, // T
+    };
     string _font = _DFONT;
 
     string _title = "motif";

@@ -14,7 +14,7 @@ M 1243 5540
 L 1100 5533 
 L 993 5540 
 L 1243 5540 
-" fill="green" stroke="black" stroke-width="10"/>
+" fill="#339541" stroke="black" stroke-width="10"/>
 <path d="
 M 1556 5448 
 L 1556 5466 
@@ -41,7 +41,7 @@ Q 600 5466 , 756 5453
 Q 933 5440 , 1178 5440 
 Q 1289 5440 , 1400 5443 
 Q 1467 5444 , 1556 5448 
-" fill="gold" stroke="black" stroke-width="10"/>
+" fill="#F5C000" stroke="black" stroke-width="10"/>
 <path d="
 M 1600 5008 
 L 1600 5104 
@@ -62,7 +62,7 @@ Q 600 5100 , 767 5031
 Q 957 4960 , 1195 4960 
 Q 1314 4960 , 1397 4971 
 Q 1481 4982 , 1600 5008 
-" fill="royalblue" stroke="black" stroke-width="10"/>
+" fill="#545FFF" stroke="black" stroke-width="10"/>
 <path d="
 M 1600 2934 
 L 1485 3913 
@@ -88,7 +88,7 @@ Q 1141 4186 , 1209 4117
 Q 1288 4033 , 1306 3878 
 L 1417 2934 
 L 1600 2934 
-" fill="#9932CC" stroke="black" stroke-width="10"/>
+" fill="#9370DB" stroke="black" stroke-width="10"/>
 <path d="
 M 2079 5521 
 L 2221 5521 
@@ -103,7 +103,7 @@ M 2293 5536
 L 2150 5528 
 L 2043 5536 
 L 2293 5536 
-" fill="green" stroke="black" stroke-width="10"/>
+" fill="#339541" stroke="black" stroke-width="10"/>
 <path d="
 M 1650 5435 
 L 1835 5435 
@@ -120,7 +120,7 @@ Q 2354 5521 , 2150 5521
 Q 1928 5521 , 1798 5513 
 Q 1650 5504 , 1650 5488 
 L 1650 5435 
-" fill="crimson" stroke="black" stroke-width="10"/>
+" fill="#D21010" stroke="black" stroke-width="10"/>
 <path d="
 M 2650 4817 
 L 2650 4955 
@@ -141,7 +141,7 @@ Q 1650 4949 , 1817 4850
 Q 2007 4748 , 2245 4748 
 Q 2364 4748 , 2447 4764 
 Q 2531 4780 , 2650 4817 
-" fill="royalblue" stroke="black" stroke-width="10"/>
+" fill="#545FFF" stroke="black" stroke-width="10"/>
 <path d="
 M 2606 3997 
 L 2606 4165 
@@ -168,7 +168,7 @@ Q 1650 4161 , 1806 4040
 Q 1983 3917 , 2228 3917 
 Q 2339 3917 , 2450 3943 
 Q 2517 3956 , 2606 3997 
-" fill="gold" stroke="black" stroke-width="10"/>
+" fill="#F5C000" stroke="black" stroke-width="10"/>
 <path d="
 M 3700 5534 
 L 3700 5537 
@@ -189,7 +189,7 @@ Q 2700 5537 , 2867 5535
 Q 3057 5532 , 3295 5532 
 Q 3414 5532 , 3497 5532 
 Q 3581 5533 , 3700 5534 
-" fill="royalblue" stroke="black" stroke-width="10"/>
+" fill="#545FFF" stroke="black" stroke-width="10"/>
 <path d="
 M 3129 5322 
 L 3271 5322 
@@ -204,7 +204,7 @@ M 3343 5434
 L 3200 5371 
 L 3093 5434 
 L 3343 5434 
-" fill="green" stroke="black" stroke-width="10"/>
+" fill="#339541" stroke="black" stroke-width="10"/>
 <path d="
 M 3656 5022 
 L 3656 5089 
@@ -231,7 +231,7 @@ Q 2700 5088 , 2856 5039
 Q 3033 4990 , 3278 4990 
 Q 3389 4990 , 3500 5001 
 Q 3567 5006 , 3656 5022 
-" fill="gold" stroke="black" stroke-width="10"/>
+" fill="#F5C000" stroke="black" stroke-width="10"/>
 <path d="
 M 3591 4308 
 L 3489 4638 
@@ -257,7 +257,7 @@ Q 3182 4729 , 3243 4706
 Q 3313 4678 , 3329 4626 
 L 3428 4308 
 L 3591 4308 
-" fill="#9932CC" stroke="black" stroke-width="10"/>
+" fill="#9370DB" stroke="black" stroke-width="10"/>
 <path d="
 M 3646 4989 
 Q 3623 4989 , 3607 4921 
@@ -277,7 +277,7 @@ Q 3633 4575 , 3627 4616
 Q 3617 4664 , 3617 4734 
 Q 3617 4805 , 3627 4852 
 Q 3633 4892 , 3646 4892 
-" fill="#9932CC" stroke="black" stroke-width="10"/>
+" fill="#9370DB" stroke="black" stroke-width="10"/>
 <path d="
 M 4750 5501 
 L 4750 5512 
@@ -298,7 +298,7 @@ Q 3750 5512 , 3917 5504
 Q 4107 5496 , 4345 5496 
 Q 4464 5496 , 4547 5497 
 Q 4631 5498 , 4750 5501 
-" fill="royalblue" stroke="black" stroke-width="10"/>
+" fill="#545FFF" stroke="black" stroke-width="10"/>
 <path d="
 M 3750 5389 
 L 3935 5389 
@@ -315,7 +315,7 @@ Q 4454 5495 , 4250 5495
 Q 4028 5495 , 3898 5485 
 Q 3750 5474 , 3750 5455 
 L 3750 5389 
-" fill="crimson" stroke="black" stroke-width="10"/>
+" fill="#D21010" stroke="black" stroke-width="10"/>
 <path d="
 M 4179 5123 
 L 4321 5123 
@@ -330,7 +330,7 @@ M 4393 5265
 L 4250 5184 
 L 4143 5265 
 L 4393 5265 
-" fill="green" stroke="black" stroke-width="10"/>
+" fill="#339541" stroke="black" stroke-width="10"/>
 <path d="
 M 4706 2680 
 L 4706 3227 
@@ -357,7 +357,7 @@ Q 3750 3214 , 3906 2818
 Q 4083 2418 , 4328 2418 
 Q 4439 2418 , 4550 2504 
 Q 4617 2546 , 4706 2680 
-" fill="gold" stroke="black" stroke-width="10"/>
+" fill="#F5C000" stroke="black" stroke-width="10"/>
 <path d="
 M 5800 5527 
 L 5800 5532 
@@ -378,7 +378,7 @@ Q 4800 5532 , 4967 5529
 Q 5157 5525 , 5395 5525 
 Q 5514 5525 , 5597 5525 
 Q 5681 5526 , 5800 5527 
-" fill="royalblue" stroke="black" stroke-width="10"/>
+" fill="#545FFF" stroke="black" stroke-width="10"/>
 <path d="
 M 4800 5450 
 L 4985 5450 
@@ -395,7 +395,7 @@ Q 5504 5524 , 5300 5524
 Q 5078 5524 , 4948 5517 
 Q 4800 5510 , 4800 5496 
 L 4800 5450 
-" fill="crimson" stroke="black" stroke-width="10"/>
+" fill="#D21010" stroke="black" stroke-width="10"/>
 <path d="
 M 5229 4881 
 L 5371 4881 
@@ -410,7 +410,7 @@ M 5443 5186
 L 5300 5013 
 L 5193 5186 
 L 5443 5186 
-" fill="green" stroke="black" stroke-width="10"/>
+" fill="#339541" stroke="black" stroke-width="10"/>
 <path d="
 M 5756 3406 
 L 5756 3736 
@@ -437,7 +437,7 @@ Q 4800 3729 , 4956 3489
 Q 5133 3248 , 5378 3248 
 Q 5489 3248 , 5600 3300 
 Q 5667 3325 , 5756 3406 
-" fill="gold" stroke="black" stroke-width="10"/>
+" fill="#F5C000" stroke="black" stroke-width="10"/>
 <path d="
 M 6850 5479 
 L 6850 5495 
@@ -458,7 +458,7 @@ Q 5850 5494 , 6017 5483
 Q 6207 5471 , 6445 5471 
 Q 6564 5471 , 6647 5473 
 Q 6731 5475 , 6850 5479 
-" fill="royalblue" stroke="black" stroke-width="10"/>
+" fill="#545FFF" stroke="black" stroke-width="10"/>
 <path d="
 M 6806 5328 
 L 6806 5360 
@@ -485,7 +485,7 @@ Q 5850 5359 , 6006 5336
 Q 6183 5313 , 6428 5313 
 Q 6539 5313 , 6650 5318 
 Q 6717 5320 , 6806 5328 
-" fill="gold" stroke="black" stroke-width="10"/>
+" fill="#F5C000" stroke="black" stroke-width="10"/>
 <path d="
 M 5850 5076 
 L 6035 5076 
@@ -502,7 +502,7 @@ Q 6554 5312 , 6350 5312
 Q 6128 5312 , 5998 5289 
 Q 5850 5265 , 5850 5223 
 L 5850 5076 
-" fill="crimson" stroke="black" stroke-width="10"/>
+" fill="#D21010" stroke="black" stroke-width="10"/>
 <path d="
 M 6279 2872 
 L 6421 2872 
@@ -517,7 +517,7 @@ M 6493 4053
 L 6350 3382 
 L 6243 4053 
 L 6493 4053 
-" fill="green" stroke="black" stroke-width="10"/>
+" fill="#339541" stroke="black" stroke-width="10"/>
 <path d="M 550 550 L 550 5550 " stroke="black" stroke-width="15"/>
 <path d="M 450 5550 L 550 5550 " stroke="black" stroke-width="40"/>
 <text text-anchor="end" x="350" y="5550" font-size="500">0</text>
@@ -531,5 +531,5 @@ L 6493 4053
 <text text-anchor="middle" x="4250" y="6150" font-size="500">4</text>
 <text text-anchor="middle" x="5300" y="6150" font-size="500">5</text>
 <text text-anchor="middle" x="6350" y="6150" font-size="500">6</text>
-<text text-anchor="middle" x="3675" y="500" font-size="500">sample</text>
+<text text-anchor="middle" x="3675" y="500" font-size="500">sample1</text>
 </svg> 
