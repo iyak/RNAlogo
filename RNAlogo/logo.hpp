@@ -1,6 +1,6 @@
 //
 //  logo.hpp
-//  RNAelem
+//  RNAlogo
 //
 //  Created by Hiroshi Miyake on 2017/01/31.
 //  Copyright © 2017 Kiryu Lab. All rights reserved.
@@ -255,6 +255,7 @@ namespace iyak {
     int _rowh = 5000;
     int _titleh = 500;
     int _yaxisw = 500;
+    int _yrulerl = 100;
     int _xaxish = 500;
     int _metah = 500;
 
@@ -265,11 +266,15 @@ namespace iyak {
     "<svg xmlns=\"http://www.w3.org/2000/svg\"\n"
     "viewBox=\"$VIEWBOX\">\n$PATHTAG$AXESTAG$TITLETAG$METATAG</svg>";
 
+    int spaced(int a) {return a;}
+    template<class...T>
+    int spaced(int a,T...b) {return a + spaced(b...) + (0<a? _space:0);}
+
     string put_svg_viewbox() {
       return paste1
       (0,0,
-       _yaxisw + _space + (_colw+_space) * size(_table) + _space,
-       _titleh + _space + _rowh + _space + _xaxish + _space + _metah);
+       spaced(_yaxisw, _yrulerl, (_colw+_space)*size(_table)),
+       spaced(_titleh, _rowh, _metah, _xaxish));
     }
 
     string put_svg_path() {
@@ -287,11 +292,11 @@ namespace iyak {
         s = paste1
         (
          "<path d=\"M",
-         _yaxisw + _space,
-         _titleh + _space + _rowh - _scale*(int(_max_v)),
+         spaced(_yaxisw, _yrulerl),
+         spaced(_titleh, _rowh - _scale*(int(_max_v))),
          "L",
-         _yaxisw + _space,
-         _titleh + _space + _rowh,
+         spaced(_yaxisw, _yrulerl),
+         spaced(_titleh, _rowh),
          "\" stroke=\"black\" stroke-width=\"15\"/>\n"
          );
 
@@ -300,37 +305,34 @@ namespace iyak {
           s += paste1
           (
            "<path d=\"M",
-           _yaxisw + _space - 2*_space,
-           _titleh + _space + _rowh - round(_scale*i),
-           "L",
            _yaxisw + _space,
-           _titleh + _space + _rowh - round(_scale*i),
+           spaced(_titleh, _rowh-round(_scale*i)),
+           "L",
+           spaced(_yaxisw, _yrulerl),
+           spaced(_titleh, _rowh-round(_scale*i)),
            "\" stroke=\"black\" stroke-width=\"40\"/>\n"
            );
           /* y ruler text */
           s += paste0
           (
-           "<text text-anchor=\"end\" x=\"",
-           _yaxisw - _space*3,
-           "\" y=\"",
-           _titleh + _space + _rowh - round(_scale*i),
-           "\" font-size=\"",
-           _yaxisw,
+           "<text text-anchor=\"end\" x=\"", _yaxisw,
+           "\" y=\"", spaced(_titleh, _rowh-round(_scale*i)),
+           "\" font-size=\"", _yaxisw,
+           "\" alignment-baseline=\"middle",
            "\">", to_str(i), "</text>\n"
            );
         }
       }
       if (0<_xaxish) {
+        /* x axis text */
         for (int i=0; i<size(_table); ++i) {
           s += paste0
           (
            "<text text-anchor=\"middle\" x=\"",
-           _yaxisw + _space + _space + (_colw+_space)*i + _colw/2,
-           "\" y=\"",
-           _titleh + _space + _rowh + _space +
-           _xaxish + _space + _metah,
-           "\" font-size=\"",
-           _xaxish,
+           spaced(_yaxisw, _yrulerl, (_colw+_space)*i + _colw/2),
+           "\" y=\"", spaced(_titleh, _rowh, _metah, _xaxish),
+           "\" font-size=\"", _xaxish,
+           "\" alignment-baseline=\"baseline"
            "\">", to_str(i+1), "</text>\n"
            );
         }
@@ -339,15 +341,19 @@ namespace iyak {
     }
 
     string put_svg_title() {
-      if (0 == _titleh) return "";
-      return paste0
-      (
-       "<text text-anchor=\"middle\" x=\"",
-       _yaxisw + (size(_table) * (_colw + _space) + _space) / 2,
-       "\" y=\"", _titleh,
-       "\" font-size=\"", _titleh,
-       "\">", _title, "</text>\n"
-       );
+      string s = "";
+      if (0<_titleh) {
+        s += paste0
+        (
+         "<text text-anchor=\"middle\" x=\"",
+         spaced(_yaxisw, _yrulerl, ((_colw+_space)*size(_table)-_space)/2),
+         "\" y=\"", _titleh,
+         "\" font-size=\"", _titleh,
+         "\" alignment-baseline=\"baseline",
+         "\">", _title, "</text>\n"
+         );
+      }
+      return s;
     }
 
     string put_svg_meta() {
@@ -357,11 +363,10 @@ namespace iyak {
           s += paste0
           (
            "<text text-anchor=\"middle\" x=\"",
-           _yaxisw + _space + _space + (_colw+_space)*i + _colw/2,
-           "\" y=\"",
-           _titleh + _space + _rowh + _space + _metah,
-           "\" font-size=\"",
-           _metah,
+           spaced(_yaxisw, _yrulerl, (_colw+_space)*i + _colw/2),
+           "\" y=\"", spaced(_titleh, _rowh, _metah),
+           "\" font-size=\"", _metah,
+           "\" alignment-baseline=\"baseline",
            "\">", _meta[i], "</text>\n"
            );
         }
@@ -412,11 +417,11 @@ namespace iyak {
 
       _max_v = max_v;
       _scale = _rowh / _max_v;
-      auto x = _yaxisw + _space + _space;
       _titleh = max(_titleh, _yaxisw);
+      auto x = spaced(_yaxisw, _yrulerl) + _space;
 
       for (auto t: _table) {
-        auto y = _titleh + _space + _rowh; /* baseline of table */
+        auto y = spaced(_titleh, _rowh); /* baseline of table */
         for (auto tt: t) {
           tt.alph.place(x, y-tt.val*_scale, _colw, tt.val*_scale);
           y -= tt.val*_scale;
