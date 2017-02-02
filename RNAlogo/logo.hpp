@@ -243,7 +243,7 @@ namespace iyak {
     };
     string _font = _DFONT;
 
-    string _title = "motif";
+    string _title = "";
     VS _meta {};
 
     FT_Pos _colw = 1000;
@@ -405,6 +405,7 @@ namespace iyak {
       _max_v = max_v;
       _scale = _rowh / _max_v;
       auto x = _yaxisw + _space + _space;
+      _titleh = max(_titleh, _yaxisw);
 
       for (auto t: _table) {
         auto y = _titleh + _space + _rowh; /* baseline of table */
