@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
   logo.map_color("Ψ", "mediumpurple");
   logo.map_color("Ψo", "#9370DB");
 
-  logo.pict_table_bit
+  std::cout << logo.pict_table_bit
   (
    {{1,22,4,93},{1,24,29, 3},{12,1,19,39},{5,1,51,2},{23,1,66,3},{56,2,4,6}},
    {{"A","C","G","Ψ"},{"A","C","G","U"},{"A","C","G","Ψo"},{"A","C","G","U"},

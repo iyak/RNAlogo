@@ -1,6 +1,6 @@
 //
 //  logo.hpp
-//  RNAlogo
+//  RNAelem
 //
 //  Created by Hiroshi Miyake on 2017/01/31.
 //  Copyright © 2017 Kiryu Lab. All rights reserved.
@@ -55,7 +55,7 @@ namespace iyak {
   public:
     int len() {return size(_codes);}
     string str() {return _s;}
-    char32_t code(int i) {return _codes[i];}
+    char32_t code(int i) {return _codes.at(i);}
     vector<char32_t> codes() {return _codes;}
     utfs(string s) {
       for (int i=0; i<size(s);) {
@@ -81,9 +81,8 @@ namespace iyak {
     FT_Outline& o(FT_Face& f) {return f->glyph->outline;}
     FT_Glyph_Metrics& m(FT_Face& f) {return f->glyph->metrics;}
 
-    FT_Pos _h;
-    FT_Pos _w;
-    FTV _pos;
+    int _h = 0;
+    int _w = 0;
 
     void load_glyph(FT_Face& f, FT_ULong u) {
 
@@ -116,20 +115,26 @@ namespace iyak {
       FT_Outline_Transform(&o(f), &mm);
     }
 
-    FT_BBox calc_bb (FT_Face& f) {
+    struct bbox {
+      int x,y,w,h;
+      bbox(FT_Pos a,FT_Pos b,FT_Pos c,FT_Pos d):
+      x((int)a),y((int)b),w((int)c),h((int)d){}
+    };
+
+    bbox calc_bb (FT_Face& f) {
       FT_BBox bb;
       auto err = FT_Outline_Get_BBox(&o(f), &bb);
       check(!err, "fail get bb:", _alph);
-      return bb;
+      return bbox(bb.xMin,bb.yMin,bb.xMax-bb.xMin,bb.yMax-bb.yMin);
     }
 
-    void shift_bb(FT_Face& f, FTVc r) {
-      FT_Outline_Translate(&o(f),  r.x, r.y);
+    void shift_bb(FT_Face& f, int x, int y) {
+      FT_Outline_Translate(&o(f), x, y);
     }
 
-    void set_pos(FT_Face& f, FTVc r) {
+    void set_pos(FT_Face& f, int x, int y) {
       auto bb = calc_bb(f);
-      shift_bb(f, {.x=r.x-bb.xMin, .y=r.y-bb.yMin});
+      shift_bb(f, x-bb.x, y-bb.y);
       bb = calc_bb(f);
     }
 
@@ -144,17 +149,17 @@ namespace iyak {
 
         load_glyph(f, utf[i]);
         auto bb = calc_bb(f);
-        _w += bb.xMax-bb.xMin;
-        _h = max(_h, bb.yMax-bb.yMin);
+        _w += bb.w;
+        _h = max(_h, bb.h);
 
-        set_pos(f, {.x=0, .y=0});
+        set_pos(f, 0, 0);
       }
 
-      FT_Fixed w = 0;
+      int w = 0;
       for (auto& f: _faces) {
         auto bb = calc_bb(f);
-        shift_bb(f, {.x=w, .y=_h-(bb.yMax-bb.yMin)});
-        w += bb.xMax-bb.xMin;
+        shift_bb(f, w, _h-bb.h);
+        w += bb.w;
       }
     }
 
@@ -176,7 +181,7 @@ namespace iyak {
       set_alph(alph);
     }
 
-    string put_svg_path(std::unordered_map<char32_t,string>& map) {
+    string put_svg_path(umap<char32_t,string>& map) {
       string s = "";
 
       for (int i=0; i<size(_faces); ++i) {
@@ -185,27 +190,26 @@ namespace iyak {
 
         FT_Outline_Funcs callback {
           .move_to = [](FTVc* to, void* ptr) {
-            auto s = static_cast<string*>(ptr);
+            auto s = (string*)ptr;
             *s += paste1("M", to->x, to->y, "\n");
             return 0;
           },
           .line_to = [](FTVc* to, void* ptr) {
-            auto s = static_cast<string*>(ptr);
+            auto s = (string*)ptr;
             *s += paste1("L", to->x, to->y, "\n");
             return 0;
           },
           .conic_to = [](FTVc* c, FTVc* to, void* ptr) {
-            auto s = static_cast<string*>(ptr);
+            auto s = (string*)ptr;
             *s += paste1("Q", c->x, c->y, ",", to->x, to->y, "\n");
             return 0;
           },
           .cubic_to = [](FTVc* c0, FTVc* c1, FTVc* to, void* ptr) {
-            auto s = static_cast<string*>(ptr);
+            auto s = (string*)ptr;
             *s += paste1("C", c0->x, c0->y, ",", c1->x, c1->y,
-                                  ",", to->x, to->y, "\n");
+                         ",", to->x, to->y, "\n");
             return 0;
           }
-
         };
         FT_Outline_Decompose(&o(f), &callback, &s);
 
@@ -215,10 +219,10 @@ namespace iyak {
       return s;
     }
 
-    void place(FTVc r, double w, double h) {
+    void place(int x, int y, double w, double h) {
       for (auto& f: _faces) {
-        mapply(f, {{w/_w,0},{0,h/_h}});
-        shift_bb(f, r);
+        mapply(f, {{w/_w,0.},{0.,h/_h}});
+        shift_bb(f, x, y);
       }
     }
   };
@@ -234,7 +238,7 @@ namespace iyak {
 
     using table_t = vector<vector<logo_pair>>;
     table_t _table;
-    std::unordered_map<char32_t, string> _color_map {
+    umap<char32_t, string> _color_map {
       {0x00000041, "#339541"}, // A
       {0x00000047, "#F5C000"}, // G
       {0x00000043, "#545FFF"}, // C
@@ -246,13 +250,13 @@ namespace iyak {
     string _title = "";
     VS _meta {};
 
-    FT_Pos _colw = 1000;
-    FT_Pos _space = 50;
-    FT_Pos _rowh = 5000;
-    FT_Pos _titleh = 500;
-    FT_Pos _yaxisw = 500;
-    FT_Pos _xaxish = 500;
-    FT_Pos _metah = 500;
+    int _colw = 1000;
+    int _space = 50;
+    int _rowh = 5000;
+    int _titleh = 500;
+    int _yaxisw = 500;
+    int _xaxish = 500;
+    int _metah = 500;
 
     double _scale;
     double _max_v;
@@ -279,11 +283,12 @@ namespace iyak {
     string put_svg_axes() {
       string s = "";
       if (0<_yaxisw) {
+        /* y axis */
         s = paste1
         (
          "<path d=\"M",
          _yaxisw + _space,
-         _titleh + _space,
+         _titleh + _space + _rowh - _scale*(int(_max_v)),
          "L",
          _yaxisw + _space,
          _titleh + _space + _rowh,
@@ -291,6 +296,7 @@ namespace iyak {
          );
 
         for (int i=0; i<=_max_v+1e-10; ++i) {
+          /* y ruler */
           s += paste1
           (
            "<path d=\"M",
@@ -301,6 +307,7 @@ namespace iyak {
            _titleh + _space + _rowh - round(_scale*i),
            "\" stroke=\"black\" stroke-width=\"40\"/>\n"
            );
+          /* y ruler text */
           s += paste0
           (
            "<text text-anchor=\"end\" x=\"",
@@ -340,7 +347,7 @@ namespace iyak {
        "\" y=\"", _titleh,
        "\" font-size=\"", _titleh,
        "\">", _title, "</text>\n"
-      );
+       );
     }
 
     string put_svg_meta() {
@@ -373,7 +380,8 @@ namespace iyak {
       return s;
     }
 
-    V v2bit (V v) {
+    V v2bit (V const w) {
+      V v(w);
       double sum = 0;
       for (auto vv: v) sum += vv;
       if (0!=sum) for (auto& vv: v) vv /= sum;
@@ -385,10 +393,10 @@ namespace iyak {
       return v;
     }
 
-    void pict_logo(VV const& vv,
-                   VVS const& aa,
-                   VS const& meta,
-                   double const max_v) {
+    string pict_logo(VV const& vv,
+                     VVS const& aa,
+                     VS const& meta,
+                     double const max_v) {
 
       _table.clear();
       check(size(vv)==size(aa), "not same dim:", vv, aa);
@@ -410,8 +418,7 @@ namespace iyak {
       for (auto t: _table) {
         auto y = _titleh + _space + _rowh; /* baseline of table */
         for (auto tt: t) {
-          FT_Vector pos {.x=x, .y=FT_Pos(y-tt.val*_scale)};
-          tt.alph.place(pos, _colw, tt.val*_scale);
+          tt.alph.place(x, y-tt.val*_scale, _colw, tt.val*_scale);
           y -= tt.val*_scale;
         }
         x += _colw + _space ;
@@ -420,7 +427,7 @@ namespace iyak {
       if (size(vv)==size(meta)) {_meta = meta;}
       else {_metah = 0;}
 
-      dat0(put_svg());
+      return put_svg();
     }
 
   public:
@@ -435,15 +442,15 @@ namespace iyak {
     void set_y_axis_width(int y_axis_width) {_yaxisw = y_axis_width;}
     void set_meta_height(int meta_height) {_metah = meta_height;}
     void set_space(int space) {_space = space;}
-    
+
     void map_color(std::string s, string c) {
       auto utf = utfs(s).codes();
       for (auto u: utf) _color_map[u] = c;
     }
 
-    void pict_table_bit(VV const& vv,
-                        VVS const& aa,
-                        VS const& meta) {
+    string pict_table_bit(VV const& vv,
+                          VVS const& aa,
+                          VS const& meta) {
 
       int maxd=0;
       VV v(vv);
@@ -451,12 +458,12 @@ namespace iyak {
         maxd = max(maxd, size(vi));
         vi = v2bit(vi);
       }
-      pict_logo(v, aa, meta, log2(maxd));
+      return pict_logo(v, aa, meta, log2(maxd));
     }
 
-    void pict_table_freq(VV const& vv,
-                         VVS const& aa,
-                         VS const& meta) {
+    string pict_table_freq(VV const& vv,
+                           VVS const& aa,
+                           VS const& meta) {
 
       VV v(vv);
       for (auto& vi: v) {
@@ -464,7 +471,8 @@ namespace iyak {
         for (auto vij: vi) sum += vij;
         for (auto& vij: vi) vij /= sum;
       }
-      pict_logo(v, aa, meta, 1.);
+
+      return pict_logo(v, aa, meta, 1.);
     }
   };
 }

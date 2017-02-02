@@ -1,6 +1,6 @@
 //
 //  util.hpp
-//  RNAlogo
+//  RNAelem
 //
 //  Created by Hiroshi Miyake on 2016/11/09.
 //  Copyright © 2016 Kiryu Lab. All rights reserved.
@@ -73,7 +73,8 @@ namespace iyak {
   using VB = std::vector<bool>;
   using VVB = std::vector<VB>;
 
-  template<class T> using suomap = std::unordered_map<std::string, T>;
+  template<class T,class S> using umap = std::unordered_map<T, S>;
+  template<class T> using sumap = umap<std::string, T>;
 
   using isstream = std::istringstream;
   using osstream = std::ostringstream;
@@ -117,7 +118,7 @@ namespace iyak {
   struct NullBuf: std::streambuf {int overflow(int c) {return c;}};
   NullBuf null_buf;
   std::ostream null_stream(&null_buf);
-  suomap<std::ostream*> _map_strm = {
+  sumap<std::ostream*> _map_strm = {
     {"~NULL~", &null_stream}, {"~COUT~", &std::cout}, {"~CERR~", &std::cerr}
   };
   std::vector<uptr<std::ostream>> _uptr_strm;
@@ -152,7 +153,7 @@ namespace iyak {
 
   /* data log */
   template<class...A> void dat(int i, A const&... a) {
-    _format(*(_map_strm[_nam_strm[i]]), a...);
+    if (0<=i) _format(*(_map_strm[_nam_strm[i]]), a...);
   }
   template<class...A>void dat0(A const&... a) {
     _format(std::cout, a...);
@@ -255,6 +256,12 @@ namespace iyak {
     size_t p1 = 0;
 
     vector<T> elms {};
+    if (0==size(delim)) {
+      for (int i=0; i<size(s); ++i)
+        elms.push_back(iss_cast<T>(s.substr(i,1)));
+      return elms;
+    }
+
     while (npos != (p1=s.find(delim, p0))) {
       elms.push_back(iss_cast<T>(s.substr(p0, p1-p0)));
       p0 = p1 + delim.size();
@@ -270,6 +277,12 @@ namespace iyak {
     size_t p1 = 0;
 
     VS elms {};
+    if (0==size(delim)) {
+      for (int i=0; i<size(s); ++i)
+        elms.push_back(s.substr(i,1));
+      return elms;
+    }
+
     while (npos != (p1=s.find(delim, p0))) {
       elms.push_back(s.substr(p0, p1-p0));
       p0 = p1 + delim.size();
