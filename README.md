@@ -18,8 +18,8 @@ The generated sample logo looks like,
 
 ## Usage
 
-I wrote for the demonstration the simplest logo generator which only accepts healthful data. See src/main_stack.cpp.
-You build the program in the same way with above.
+I wrote for the demonstration the simplest logo generator which only accepts healthful data. See RNAlogo/main_stack.cpp.
+It is built in the way above. It runs like,
 
 ```bash
 $ cat a.dat
@@ -31,7 +31,7 @@ AUCGUC
 $ cat a.dat | build/bin/RNAlogo-stack > a.svg
 ```
 
-You can generate more flexible logos by writing your program for batch application.
+You can generate more flexible logos by tweeking the program for batch application.
 Place in your project and include the header file.
 Following is the example to generate sample-1.svg.
 
