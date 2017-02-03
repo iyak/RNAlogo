@@ -1,15 +1,15 @@
 # RNAlogo
 
 A biological sequence logo generator in SVG format, for the usage as a header-only library for cpp programs.
-The alphabets are given as any kinds of Unicode strings, such as "Ψ" (greek) or "AU" (two characters).
+The alphabets are given as any kinds of Unicode strings, such as "Ψ" (Greek) or "AU" (two characters).
 
 ## Download & Run sample code
 
 ```bash
-git clone htpps://github.com/iyak/RNAlogo.git
-cd RNAlogo
-./waf configure build
-build/bin/RNAlogo-sample > sample.svg
+$ git clone htpps://github.com/iyak/RNAlogo.git
+$ cd RNAlogo
+$ ./waf configure build
+$ build/bin/RNAlogo-sample > sample.svg
 ```
 
 The generated sample logo looks like,
@@ -18,7 +18,22 @@ The generated sample logo looks like,
 
 ## Usage
 
-Include the header file. Then,
+I wrote for the demonstration the simplest logo generator which only accepts healthful data. See src/main_stack.cpp.
+You build the program in the same way with above.
+
+```bash
+$ cat a.dat
+ACUGAC
+ACUGAC
+UCAGCU
+UACGUC
+AUCGUC
+$ cat a.dat | build/bin/RNAlogo-stack > a.svg
+```
+
+You can generate more flexible logos by writing your program for batch application.
+Place in your project and include the header file.
+Following is the example to generate sample-1.svg.
 
 ```c++
 #include "logo.hpp"

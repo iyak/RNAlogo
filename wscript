@@ -49,8 +49,17 @@ def build(bld):
   bld(
       features="cxx cxxprogram",
       cxxflags="-Wall -std=c++11",
-      source="RNAlogo/main.cpp",
+      source="RNAlogo/main_sample.cpp",
       include="RNAlogo",
       target="bin/RNAlogo-sample",
+      uselib="freetype",
+      )
+
+  bld(
+      features="cxx cxxprogram",
+      cxxflags="-Wall -std=c++11",
+      source="RNAlogo/main_stack.cpp",
+      include="RNAlogo",
+      target="bin/RNAlogo-stack",
       uselib="freetype",
       )

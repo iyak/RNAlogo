@@ -455,7 +455,7 @@ namespace iyak {
 
     string pict_table_bit(VV const& vv,
                           VVS const& aa,
-                          VS const& meta) {
+                          VS const& meta={}) {
 
       int maxd=0;
       VV v(vv);
@@ -468,7 +468,7 @@ namespace iyak {
 
     string pict_table_freq(VV const& vv,
                            VVS const& aa,
-                           VS const& meta) {
+                           VS const& meta={}) {
 
       VV v(vv);
       for (auto& vi: v) {
