@@ -17,7 +17,6 @@ int main(int argc, char* argv[]) {
   umap<char,int> c2i {{'A',0},{'C',1},{'G',2},{'U',3}};
   VV stack {};
   for (string line; std::cin >> line;) {
-    line.erase(line.end());
     stack.resize(line.length(),{0,0,0,0});
     for (int i=0; i<line.length(); ++i)
       stack[i][c2i[line[i]]] += 1;
