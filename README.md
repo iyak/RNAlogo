@@ -18,7 +18,7 @@ The generated sample logo looks like,
 
 ## Usage
 
-I wrote for the demonstration the simplest logo generator which only accepts healthful data. See RNAlogo/main_stack.cpp.
+I wrote for the demonstration the simplest logo generator which only accepts healthy data. See RNAlogo/main_stack.cpp.
 It is built in the way above. It runs like,
 
 ```bash
