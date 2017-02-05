@@ -27,25 +27,23 @@
 
 namespace iyak {
 
-  class utfs {
-    vector<char32_t> _codes;
+  class utf8 {
+    vector<uint32_t> _codes;
     string _s;
 
-    int utf8_size(unsigned char byte) {
+    int nunits(unsigned char byte) {
       return
-      byte<0xc0? 1:
-      0xc0==(byte&0xe0)? 2:
-      0xe0==(byte&0xf0)? 3:
-      0xf0==(byte&0xf8)? 4:
-      0xf8==(byte&0xfc)? 5:
-      0xfc==(byte&0xfe)? 6:
+      byte<0x80? 1:
+      byte<0xe0? 2:
+      byte<0xf0? 3:
+      byte<0xf8? 4:
       -1;
     }
 
-    char32_t utf_unit(string s) {
-      check(size(s)==utf8_size(s[0]));
+    uint32_t unit(string s) {
+      check(size(s)==nunits(s[0]), "wrong unit:", s);
       if (1==size(s)) return s[0];
-      char32_t c = (s[0]&(0xff>>(size(s)+1))) << (6*(size(s)-1));
+      uint32_t c = (s[0]&(0xff>>(size(s)+1))) << (6*(size(s)-1));
       for (int i=1; i<size(s); ++i) {
         c |= (s[i]&0x3f) << (6*(size(s)-1-i));
       }
@@ -55,15 +53,30 @@ namespace iyak {
   public:
     int len() {return size(_codes);}
     string str() {return _s;}
-    char32_t code(int i) {return _codes.at(i);}
-    vector<char32_t> codes() {return _codes;}
-    utfs(string s) {
+    uint32_t code(int i) {return _codes.at(i);}
+    vector<uint32_t> codes() {return _codes;}
+    utf8(string s) {
+      _s = s;
       for (int i=0; i<size(s);) {
-        int n = utf8_size(s[i]);
-        _codes.push_back(utf_unit(s.substr(i, n)));
+        int n = nunits(s[i]);
+        _codes.push_back(unit(s.substr(i, n)));
         i += n;
       }
     }
+  };
+
+  class ft_face {
+    FT_Face _face = nullptr;
+    FT_Library _lib = nullptr;
+  public:
+    ft_face(uint32_t c, string font) {
+      auto e=FT_Init_FreeType(&_lib);
+      check(!e, "fail init lib");
+      e = FT_New_Face(_lib, font.c_str(), 0, &_face);
+      check(!e, "fail init lib");
+    }
+    ~ft_face() {FT_Done_Face(_face);FT_Done_FreeType(_lib);}
+    FT_Face get() {return _face;}
   };
 
   class RNAlogoAlph {
@@ -71,28 +84,21 @@ namespace iyak {
     using FTV = FT_Vector;
     using FTVc = FTV const;
 
-    string _font = _DFONT;
-    FT_Library _lib;
-
     string _alph;
     string _path;
+    string _font;
 
-    vector<FT_Face> _faces;
-    FT_Outline& o(FT_Face& f) {return f->glyph->outline;}
-    FT_Glyph_Metrics& m(FT_Face& f) {return f->glyph->metrics;}
+    vector<uptr<ft_face>> _faces;
+    FT_Outline& o(ft_face& f) {return f.get()->glyph->outline;}
+    FT_Glyph_Metrics& m(ft_face& f) {return f.get()->glyph->metrics;}
 
     int _h = 0;
     int _w = 0;
 
-    void load_glyph(FT_Face& f, FT_ULong u) {
-
-      auto err = FT_New_Face(_lib, _font.c_str(), 0, &f);
-      check(!err, "fail open:", _font);
-      check(f->face_flags&FT_FACE_FLAG_SCALABLE, "unscalable face");
-
-      auto i = FT_Get_Char_Index(f, u);
-      err = FT_Load_Glyph(f, i, FT_LOAD_NO_SCALE|FT_LOAD_NO_BITMAP);
-      check(!err, "fail load glyph", _alph);
+    void load_glyph(ft_face& f, FT_ULong u) {
+      auto i = FT_Get_Char_Index(f.get(), u);
+      auto err = FT_Load_Glyph(f.get(), i, FT_LOAD_NO_SCALE|FT_LOAD_NO_BITMAP);
+      check(!err, "fail load glyph", u);
 
       err = FT_Outline_Embolden(&o(f), 50);
       check(!err, "fail embolden:", _alph);
@@ -104,7 +110,7 @@ namespace iyak {
       mapply(f, {{rx,0},{0,ry}}); /* shrink */
     }
 
-    void mapply (FT_Face& f, VV m) {
+    void mapply (ft_face& f, VV m) {
       FT_Fixed scaler = 1<<16;
       FT_Matrix mm {
         .xx=static_cast<FT_Fixed>(round(m[0][0]*scaler)),
@@ -121,67 +127,52 @@ namespace iyak {
       x((int)a),y((int)b),w((int)c),h((int)d){}
     };
 
-    bbox calc_bb (FT_Face& f) {
+    bbox calc_bb (ft_face& f) {
       FT_BBox bb;
       auto err = FT_Outline_Get_BBox(&o(f), &bb);
       check(!err, "fail get bb:", _alph);
       return bbox(bb.xMin,bb.yMin,bb.xMax-bb.xMin,bb.yMax-bb.yMin);
     }
 
-    void shift_bb(FT_Face& f, int x, int y) {
+    void shift_bb(ft_face& f, int x, int y) {
       FT_Outline_Translate(&o(f), x, y);
     }
 
-    void set_pos(FT_Face& f, int x, int y) {
+    void set_pos(ft_face& f, int x, int y) {
       auto bb = calc_bb(f);
       shift_bb(f, x-bb.x, y-bb.y);
       bb = calc_bb(f);
     }
 
-    void load_outline(string& alph) {
+  public:
 
-      auto utf = utfs(alph).codes();
-      _faces.assign(size(utf), FT_Face{});
-
+    RNAlogoAlph(string a, string font): _alph(a), _font(font) {
       _w = _h = 0;
+      auto utf = utf8(_alph).codes();
       for (int i=0; i<size(utf); ++i) {
-        auto& f = _faces[i];
 
-        load_glyph(f, utf[i]);
-        auto bb = calc_bb(f);
+        _faces.push_back(uptrize(new ft_face(utf[i], _font)));
+        auto& f = _faces.back();
+
+        load_glyph(*f, utf[i]);
+        auto bb = calc_bb(*f);
         _w += bb.w;
         _h = max(_h, bb.h);
 
-        set_pos(f, 0, 0);
+        set_pos(*f, 0, 0);
       }
 
       int w = 0;
       for (auto& f: _faces) {
-        auto bb = calc_bb(f);
-        shift_bb(f, w, _h-bb.h);
+        auto bb = calc_bb(*f);
+        shift_bb(*f, w, _h-bb.h);
         w += bb.w;
       }
     }
 
-    void set_font(string font) {
-      _font = font;
-    }
+    string alph() {return _alph;}
 
-    void set_alph(string alph) {
-      _alph = alph;
-      auto err = FT_Init_FreeType(&_lib);
-      check(!err, "fail init");
-      load_outline(alph);
-    }
-
-  public:
-
-    RNAlogoAlph(string font, string alph) {
-      set_font(font);
-      set_alph(alph);
-    }
-
-    string put_svg_path(umap<char32_t,string>& map) {
+    string put_svg_path(umap<uint32_t,string>& map) {
       string s = "";
 
       for (int i=0; i<size(_faces); ++i) {
@@ -211,9 +202,9 @@ namespace iyak {
             return 0;
           }
         };
-        FT_Outline_Decompose(&o(f), &callback, &s);
+        FT_Outline_Decompose(&o(*f), &callback, &s);
 
-        s += "\" fill=\"" + map[utfs(_alph).code(i)] +
+        s += "\" fill=\"" + map[utf8(_alph).code(i)] +
         "\" stroke=\"black\" stroke-width=\"10\"/>\n";
       }
       return s;
@@ -221,29 +212,31 @@ namespace iyak {
 
     void place(int x, int y, double w, double h) {
       for (auto& f: _faces) {
-        mapply(f, {{w/_w,0.},{0.,h/_h}});
-        shift_bb(f, x, y);
+        mapply(*f, {{w/_w,0.},{0.,h/_h}});
+        shift_bb(*f, x, y);
       }
     }
   };
 
+  
   struct logo_pair {
     double val;
     RNAlogoAlph alph;
-    logo_pair(double v, string f, string a): val(v), alph(f, a) {}
+    logo_pair(double v, string a, string f): val(v), alph(a, f) {}
     bool static cmp(logo_pair& a, logo_pair& b) {return a.val < b.val;}
   };
 
+  
   class RNAlogo {
 
-    using table_t = vector<vector<logo_pair>>;
-    table_t _table;
-    umap<char32_t, string> _color_map {
-      {0x00000041, "#339541"}, // A
-      {0x00000047, "#F5C000"}, // G
-      {0x00000043, "#545FFF"}, // C
-      {0x00000055, "#D21010"}, // U
-      {0x00000054, "#D21010"}, // T
+    vector<vector<logo_pair>> _table;
+    umap<uint32_t, string> _color_map {
+      /* ascii can replace utf8 */
+      {'A',"#339541"}, {'a',"#339541"},
+      {'G',"#F5C000"}, {'g',"#F5C000"},
+      {'C',"#545FFF"}, {'c',"#545FFF"},
+      {'U',"#D21010"}, {'u',"#D21010"},
+      {'T',"#D21010"}, {'t',"#D21010"},
     };
     string _font = _DFONT;
 
@@ -264,7 +257,12 @@ namespace iyak {
 
     string _svg_header_footer =
     "<svg xmlns=\"http://www.w3.org/2000/svg\"\n"
-    "viewBox=\"$VIEWBOX\">\n$PATHTAG$AXESTAG$TITLETAG$METATAG</svg>";
+    "viewBox=\"$VIEWBOX\">\n"
+    "$PATHTAG"
+    "$AXESTAG"
+    "$TITLETAG"
+    "$METATAG"
+    "</svg>\n";
 
     int spaced(int a) {return a;}
     template<class...T>
@@ -408,9 +406,9 @@ namespace iyak {
       for (int i=0; i<size(vv); ++i) {
 
         check(size(vv[i])==size(aa[i]), "not same dim:", vv, aa);
-        _table.push_back(vector<logo_pair>{});
+        _table.emplace_back();
         for (int j=0; j<size(vv[i]); ++j)
-          _table.back().emplace_back(vv[i][j], _font, aa[i][j]);
+          _table.back().emplace_back(vv[i][j], aa[i][j], _font);
 
         std::sort(_table.back().begin(), _table.back().end(), logo_pair::cmp);
       }
@@ -420,9 +418,9 @@ namespace iyak {
       _titleh = max(_titleh, _yaxisw);
       auto x = spaced(_yaxisw, _yrulerl) + _space;
 
-      for (auto t: _table) {
+      for (auto& t: _table) {
         auto y = spaced(_titleh, _rowh); /* baseline of table */
-        for (auto tt: t) {
+        for (auto& tt: t) {
           tt.alph.place(x, y-tt.val*_scale, _colw, tt.val*_scale);
           y -= tt.val*_scale;
         }
@@ -449,7 +447,7 @@ namespace iyak {
     void set_space(int space) {_space = space;}
 
     void map_color(std::string s, string c) {
-      auto utf = utfs(s).codes();
+      auto utf = utf8(s).codes();
       for (auto u: utf) _color_map[u] = c;
     }
 

@@ -84,6 +84,7 @@ namespace iyak {
   using ulock = std::unique_lock<mutex>;
 
   template<class T> using uptr = std::unique_ptr<T>;
+  template<class T> uptr<T> uptrize(T* t) {return uptr<T>(t);}
   template<class T> using sptr = std::shared_ptr<T>;
 
   size_t constexpr npos = std::string::npos;
@@ -133,7 +134,7 @@ namespace iyak {
 
   void set_ostream(int i, std::string s) {
     if (_map_strm.find(s) == end(_map_strm)) { /* if new stream (file) */
-      _uptr_strm[i] = uptr<std::ostream>(new std::ofstream(s));
+      _uptr_strm[i] = uptrize(new std::ofstream(s));
       std::ostream* os = _uptr_strm[i].get();
       check(!!*os, "cannot open:", s);
       _map_strm[s] = os;
@@ -145,7 +146,7 @@ namespace iyak {
   void fclear(int i) {
     std::string s = _nam_strm[i];
     if (s=="~NULL~" or s=="~COUT~" or s=="~CERR~") {return;}
-    _uptr_strm[i] = uptr<std::ostream>(new std::ofstream(s));
+    _uptr_strm[i] = uptrize(new std::ofstream(s));
     std::ostream* os = _uptr_strm[i].get();
     check(!!*os, "cannot open:", s);
     _map_strm[s] = os;
