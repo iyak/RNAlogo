@@ -69,11 +69,11 @@ namespace iyak {
     FT_Face _face = nullptr;
     FT_Library _lib = nullptr;
   public:
-    ft_face(uint32_t c, string font) {
+    ft_face(string font) {
       auto e=FT_Init_FreeType(&_lib);
       check(!e, "fail init lib");
       e = FT_New_Face(_lib, font.c_str(), 0, &_face);
-      check(!e, "fail init lib");
+      check(!e, "fail init lib:", font);
     }
     ~ft_face() {FT_Done_Face(_face);FT_Done_FreeType(_lib);}
     FT_Face get() {return _face;}
@@ -152,7 +152,7 @@ namespace iyak {
       _w = 99*size(utf);
       for (int i=0; i<size(utf); ++i) {
 
-        _faces.push_back(uptrize(new ft_face(utf[i], _font)));
+        _faces.emplace_back(new ft_face(_font));
         auto& f = _faces.back();
 
         load_glyph(*f, utf[i]);
@@ -218,7 +218,6 @@ namespace iyak {
     }
   };
 
-  
   struct logo_pair {
     double val;
     RNAlogoAlph alph;
@@ -226,7 +225,6 @@ namespace iyak {
     bool static cmp(logo_pair& a, logo_pair& b) {return a.val < b.val;}
   };
 
-  
   class RNAlogo {
 
     vector<vector<logo_pair>> _table;
